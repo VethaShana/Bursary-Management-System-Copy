@@ -236,7 +236,7 @@ function Form() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} sm={3}>
             <TextField
               id="z-score"
               label="Z-Score"
@@ -244,7 +244,7 @@ function Form() {
               placeholder="2.9"
             />
           </Grid>
-          <Grid item sm={5}>
+          <Grid item xs={12} sm={5}>
             <FormControl size="small" variant="outlined" fullWidth>
               <InputLabel id="course-of-study">Course of Study</InputLabel>
               <Select
