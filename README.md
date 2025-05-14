@@ -8,3 +8,5 @@
 Note : Here some changes only available because this for testing purpose.
 
 Follow this link to see whole project is added to this page : https://github.com/zmardil/bursary-management-system
+
+You can find both user documentation and developer documentation in this repository.
