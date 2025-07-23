@@ -1,0 +1,238 @@
+[
+	{
+		"regNo": "",
+		"nic": "",
+		"title": "",
+		"nameWithInitials": "",
+		"fullName": "",
+		"street": "",
+		"city": "",
+		"district": "",
+		"email": "",
+		"course": "",
+		"*employed": "",
+		"employment": {
+			"establishment": "",
+			"address": { "street": "", "city": "", "district": "" },
+			"designation": "",
+			"salary": "",
+			"dateOfEmployment": ""
+		},
+		"gsArea": "",
+		"gsNo": "",
+		"dsDivision": "",
+		"indexNum": "",
+		"zScore": "",
+		"admin_districtAL": "",
+		"siblingsUnder19": [
+			{
+				"namesb": "",
+				"dob": "",
+				"school": ""
+			}
+		],
+		"Distance": "",
+		"siblingsUniversity": [
+			{
+				"name": "",
+				"regNo": "",
+				"university": "",
+				"siblingCourse": "",
+				"academicYear": "",
+				"isBursaryRecipient": ""
+			}
+		],
+		"incomeFromEstateFieldsLands": [
+			{
+				"nameOfOwner": "",
+				"relationship": "",
+				"location": "",
+				"natureOfCultivation": "",
+				"extentOfLandAndDetails": "",
+				"annualIncome": ""
+			}
+		],
+		"incomeFromHouses": [
+			{
+				"nameOfOwner": "",
+				"relationship": "",
+				"assessmentNo": "",
+				"noOfHouseholders": "",
+				"address": "",
+				"annualIncome": ""
+			}
+		],
+		"GSDNo": "",
+		"DSDivision": "",
+		"LocalAthority": "",
+		"employed": [
+			{
+				"establishmentName": "",
+				"establishmentAddress": "",
+				"post": "",
+				"salaryScale": "",
+				"salary": "",
+				"dateOfAppointment": ""
+			}
+		],
+		"spouse": [
+			{
+				"name": "",
+				"dateOfMarriage": "",
+				"spousePost": "",
+				"spouseEstablishmentName": "",
+				"spouseMonthlySalary": ""
+			}
+		],
+		"father": [
+			{
+				"fatherFullName": "",
+				"aliveOrNot": "",
+				"ageYearMonth": "",
+				"fatherOccupation": "",
+				"fatherWorkPlace": "",
+				"fatherAnnualIncome": "",
+				"fatherAnnualPropertyIncome": "",
+				"fatherAnnualOtherIncome": "",
+				"fatherTotalAnnualIncome": ""
+			}
+		],
+		"mother": [
+			{
+				"motherFullName": "",
+				"aliveOrNot": "",
+				"ageYearMonth": "",
+				"motherOccupation": "",
+				"motherWorkPlace": "",
+				"motherAnnualIncome": "",
+				"motherAnnualPropertyIncome": "",
+				"motherAnnualOtherIncome": "",
+				"motherTotalAnnualIncome": ""
+			}
+		],
+
+		"guardian": [
+			{
+				"guardianFullName": "",
+				"permanentAddress": "",
+				"guardianOccupation": "",
+				"guardianAnnualIncome": "",
+				"guardianAnnualPropertyIncome": "",
+				"guardianAge": ""
+			}
+		]
+	},
+
+	{
+		"_comment1": "this is new !",
+		"title": "Miss",
+		"fullName": "Kavitha",
+		"nic": "243456876v",
+		"address": "Kandy",
+		"phone": 94701122334,
+		"zScore": 1.256,
+		"alDistrict": "Kandy",
+		"street": "21,old park road",
+		"city": "Kandy",
+		"district": "Kandy",
+		"dsDivision": "A",
+		"email": "vvvttt479@gmail.com",
+		"gsNo": 12,
+		"gsDivision": "B",
+		"regNo": "2017/CSC/45",
+		"course": "CS",
+		"Distance": 250,
+		"siblingsUnder19": [
+			{
+				"namesb": "Raji",
+				"dob": "2001-02-11T07:06:44+00:00",
+				"school": "Vincent"
+			},
+			{
+				"namesb": "Raj",
+				"dob": "2020-12-04T16:02:25.000+00:00",
+				"school": "Michel"
+			}
+		],
+		"siblingsUniversity": [
+			{
+				"name": "Kamal",
+				"regNo": "2017/Sb/08",
+				"university": "jaffna",
+				"siblingCourse": "bioscience",
+				"academicYear": "2017/2018",
+				"isBursaryRecipient": 0
+			}
+		],
+		"incomeFromEstateFieldsLands": [],
+		"incomeFromHouses": [],
+		"employed": true,
+		"employment": {
+			"establishment": "WSO2",
+			"address": {
+				"street": "no:1,pallai road",
+				"city": "colombo-1",
+				"district": "colombo"
+			},
+			"designation": "SE",
+			"salary": 100000,
+			"dateOfEmployment": "2003-1-5"
+		},
+
+		"married": true,
+		"spouse": {
+			"name": "Ramesh",
+			"dateOfMarriage": "2003-1-5",
+			"employment": {
+				"designation": "Engineer",
+				"establishment": "WSO2",
+				"salary": 12000
+			}
+		},
+
+		"father": {
+			"name": "ABC",
+			"living": true,
+			"age": 56,
+			"employment": {
+				"occupation": "Engineer",
+				"address": "Batti"
+			},
+			"annualIncome": {
+				"occupationOrPension": 10000,
+				"houseAndProperty": 1900,
+				"otherSources": 500
+			},
+
+			"fatherTotalAnnualIncome": 12400
+		},
+
+		"mother": {
+			"name": "ABC",
+			"living": true,
+			"age": 56,
+			"employment": {
+				"occupation": "Engineer",
+				"address": "Batti"
+			},
+			"annualIncome": {
+				"occupationOrPension": 10000,
+				"houseAndProperty": 1900,
+				"otherSources": 500
+			},
+
+			"motherTotalAnnualIncome": 12400
+		},
+
+		"guardian": {
+			"name": "ABCCC",
+			"address": "Batti",
+			"post": "doctor",
+			"annualIncome": {
+				"salary": 45000,
+				"houseAndPropertyOrTemple": 12000
+			},
+			"age": 45
+		}
+	}
+]
