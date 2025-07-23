@@ -2,45 +2,37 @@ import Student from '../models/student.js'
 export default data => {
 	const {
 		married,
-		spouse: {
-			employment: { salary: spouseSalary }
-		},
-		siblingsUnder19,
-		siblingsAtUniversity,
+		spouse: { employment: { salary = 0 } = {} } = {},
+		siblingsUnder19 = [],
+		siblingsAtUniversity = [],
 		father,
 		mother,
 		guardian
 	} = data
 
-	const siblingUnder19Fund = 10 // to be changed
-	const siblingAtUniversityFund = 10 // to be changed
+	const siblingUnder19Fund = 24000
+	const siblingAtUniversityFund = 36000
 
-	let netAmount = 0
-	let capAmount = 10000 // to be changed
+	let netIncome = 0
+	let capIncome = 500000
 
-	// check marriage status
-	if (married) netAmount += parseInt(spouseSalary)
+	if (married) netIncome += parseInt(salary)
 
-	// check guardian
 	if (guardian && guardian.annualIncome) {
 		const { salary = 0, houseAndPropertyOrTemple = 0 } =
 			guardian.annualIncome
-		netAmount += salary + houseAndPropertyOrTemple
+		netIncome += parseInt(salary) + parseInt(houseAndPropertyOrTemple)
 	} else {
-		// check father
 		{
 			const {
 				occupationOrPension = 0,
 				houseAndProperty = 0,
 				otherSources = 0
 			} = father.annualIncome
-			netAmount =
-				father && father.living
-					? parseInt(occupationOrPension) +
-					  parseInt(houseAndProperty) +
-					  parseInt(otherSources) +
-					  netAmount
-					: netAmount
+			netIncome +=
+				parseInt(occupationOrPension) +
+				parseInt(houseAndProperty) +
+				parseInt(otherSources)
 		}
 		{
 			const {
@@ -48,35 +40,26 @@ export default data => {
 				houseAndProperty = 0,
 				otherSources = 0
 			} = mother.annualIncome
-			netAmount =
-				mother && mother.living
-					? parseInt(occupationOrPension) +
-					  parseInt(houseAndProperty) +
-					  parseInt(otherSources) +
-					  netAmount
-					: netAmount
+			netIncome +=
+				parseInt(occupationOrPension) +
+				parseInt(houseAndProperty) +
+				parseInt(otherSources)
 		}
 	}
 
-	/**
-	 * calculations for cap Amount
-	 */
-
-	// check siblings
-	if (siblingsUnder19 && siblingsUnder19.length > 0)
-		capAmount +=
+	if (siblingsUnder19)
+		capIncome +=
 			siblingUnder19Fund *
 			(siblingsUnder19.length <= 3 ? siblingsUnder19.length : 3)
 
-	// check siblings at university
-	if (siblingsAtUniversity && siblingsAtUniversity.length > 0) {
+	if (siblingsAtUniversity) {
 		const siblingsNotRecipientOfMahapolaOrBursary =
 			siblingsAtUniversity.filter(
-				({ mahapolaOrBursary }) => mahapolaOrBursary === false
+				({ isBursaryOrMahapolaRecipient = false }) =>
+					isBursaryOrMahapolaRecipient === false
 			)
 
-		//if maximum is thrice
-		capAmount +=
+		capIncome +=
 			siblingAtUniversityFund *
 			(siblingsNotRecipientOfMahapolaOrBursary.length <= 3
 				? siblingsNotRecipientOfMahapolaOrBursary.length
@@ -86,84 +69,5 @@ export default data => {
 		// capAmount +=
 		//   siblingAtUniversityFund * siblingsRecipientOfMahapolaOrBursary.length;
 	}
-
-	return [netAmount, capAmount]
-
-	// var data = Student.req.body
-	// const query_married = data.find([
-	// 	fullName,
-	// 	nic,
-	// 	{ married: { annual_income } },
-	// 	{ propeincomefromEstate_Fields_Lands: { annual_income } },
-	// 	{ incomefromHouses: { annual_income } },
-	// ])
-
-	// const query_guardian = data.student.find([
-	// 	fullName,
-	// 	nic,
-	// 	{ parentsDetails: { guardian: { guardianAnnualIncome } } },
-	// 	{ propeincomefromEstate_Fields_Lands: { annual_income } },
-	// 	{ incomefromHouses: { annual_income } },
-	// ])
-
-	// const query_parents = data.student.find([
-	// 	fullName,
-	// 	nic,
-	// 	{
-	// 		parentsDetails: {
-	// 			father: { fatherTotalAnnualIncome },
-	// 			mother: { motherTotalAnnualIncome },
-	// 		},
-	// 	},
-	// 	{ propeincomefromEstate_Fields_Lands: { annual_income } },
-	// 	{ incomefromHouses: { annual_income } },
-	// ])
-
-	// const noOfSibb = data.student.find(nic, {
-	// 	$count: { siblingsUniversity: [regNo] },
-	// })
-
-	// const noOfSib = data.student.find(nic, {
-	// 	$count: { siblingsUnder19: [namesb] },
-	// })
-
-	// db.student.aggregate([
-	// 	{
-	// 		salaryA: {
-	// 			$sum: {
-	// 				parentsDetails: {
-	// 					father: { fatherTotalAnnualIncome },
-	// 					mother: { motherTotalAnnualIncome },
-	// 				},
-	// 			},
-	// 			propeincomefromEstate_Fields_Lands: { annual_income },
-	// 			incomefromHouses: { annual_income },
-	// 		},
-	// 	},
-	// ])
-
-	// db.student.aggregate([
-	// 	{
-	// 		salaryB: {
-	// 			$sum: { parentsDetails: { guardian: { guardianAnnualIncome } } },
-	// 			propeincomefromEstate_Fields_Lands: { annual_income },
-	// 			incomefromHouses: { annual_income },
-	// 		},
-	// 	},
-	// ])
-
-	// db.student.aggregate([
-	// 	{
-	// 		salaryC: {
-	// 			$sum: { married: { $multiply: [{ spouseMonthlySalary }, 12] } },
-	// 		},
-	// 		propeincomefromEstate_Fields_Lands: { annual_income },
-	// 		incomefromHouses: { annual_income },
-	// 	},
-	// ])
-
-	// connection.query(query_married, function (error, result) {
-	// 	console.log(result)
-	// 	res.send(result)
-	// })
+	return [netIncome, capIncome]
 }

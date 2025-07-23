@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import { lighten, makeStyles } from '@material-ui/core/styles'
-import Table from '@material-ui/core/Table'
+import MuiTable from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
@@ -10,8 +10,9 @@ import MuiTableHead from '@material-ui/core/TableHead'
 import TablePagination from '@material-ui/core/TablePagination'
 import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
-import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
+import Collapse from '@material-ui/core/Collapse'
+import Box from '@material-ui/core/Box'
 import Checkbox from '@material-ui/core/Checkbox'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -20,39 +21,18 @@ import FilterListIcon from '@material-ui/icons/FilterList'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
+import TextField from '@material-ui/core/TextField'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded'
+import { Link, useRouteMatch } from 'react-router-dom'
+import Fuse from 'fuse.js'
+import { formatDistance, parseISO } from 'date-fns'
+import moment from 'moment'
 
-import { Button, Menu, MenuItem } from '@material-ui/core'
-
-function createData(regNo, nic, name, district, courseOfStudy, grossIncome) {
-	return { regNo, nic, name, district, courseOfStudy, grossIncome }
-}
-
-const rows = [
-	createData(
-		'2017/CSC/045',
-		'961803420V',
-		'Z. M Ardil',
-		'Kandy',
-		'Computer Science',
-		125000.0
-	),
-	createData(
-		'2017/CSC/021',
-		'963083448V',
-		'Isuru Lakmal',
-		'Anudradhapura',
-		'Computer Science',
-		220000.0
-	),
-	createData(
-		'2017/CSC/017',
-		'964028018V',
-		'Ramesh Perera',
-		'Galle',
-		'Computer Science',
-		130000.0
-	),
-]
+import { connect, useDispatch } from 'react-redux'
+import { deleteStudent } from '../../../../actions/students'
 
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
@@ -81,32 +61,37 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
+	{ id: 'date', numeric: false, disablePadding: false, label: 'Date' },
 	{
-		id: 'regNo',
-		numeric: false,
-		disablePadding: true,
-		label: 'Registration No.',
-	},
-	{ id: 'nic', numeric: false, disablePadding: false, label: 'NIC' },
-	{
-		id: 'name',
+		id: 'academicYear',
 		numeric: false,
 		disablePadding: false,
-		label: 'Name with Initials',
+		label: 'Academic Year'
 	},
-	{ id: 'district', numeric: false, disablePadding: false, label: 'District' },
 	{
-		id: 'courseOfStudy',
+		id: 'faculty',
 		numeric: false,
 		disablePadding: false,
-		label: 'Course of Study',
+		label: 'Faculty'
 	},
 	{
-		id: 'grossIncome',
+		id: 'course',
+		numeric: false,
+		disablePadding: false,
+		label: 'Course of Study'
+	},
+	{
+		id: 'createdAt',
+		numeric: false,
+		disablePadding: false,
+		label: 'Created at'
+	},
+	{
+		id: 'noOfInstallments',
 		numeric: true,
 		disablePadding: false,
-		label: 'Gross Income',
-	},
+		label: '# Installments'
+	}
 ]
 
 function TableHead(props) {
@@ -117,7 +102,7 @@ function TableHead(props) {
 		orderBy,
 		numSelected,
 		rowCount,
-		onRequestSort,
+		onRequestSort
 	} = props
 	const createSortHandler = property => event => {
 		onRequestSort(event, property)
@@ -126,15 +111,6 @@ function TableHead(props) {
 	return (
 		<MuiTableHead>
 			<TableRow>
-				<TableCell padding='checkbox'>
-					<Checkbox
-						indeterminate={numSelected > 0 && numSelected < rowCount}
-						checked={rowCount > 0 && numSelected === rowCount}
-						onChange={onSelectAllClick}
-						inputProps={{ 'aria-label': 'select all desserts' }}
-						size='small'
-					/>
-				</TableCell>
 				<TableCell />
 				{headCells.map(headCell => (
 					<TableCell
@@ -151,16 +127,48 @@ function TableHead(props) {
 							{headCell.label}
 							{orderBy === headCell.id ? (
 								<span className={classes.visuallyHidden}>
-									{order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+									{order === 'desc'
+										? 'sorted descending'
+										: 'sorted ascending'}
 								</span>
 							) : null}
 						</TableSortLabel>
 					</TableCell>
 				))}
-				<TableCell />
+				{numSelected > 0 ? null : <TableCell />}
 			</TableRow>
 		</MuiTableHead>
 	)
+}
+
+const useTableSearchStyles = makeStyles(theme => ({
+	root: {
+		marginBottom: theme.spacing(1)
+	}
+}))
+
+const TableSearch = props => {
+	const classes = useTableSearchStyles()
+	const { onQueryChange } = props
+	return (
+		<TextField
+			className={classes.root}
+			placeholder="Search"
+			onChange={onQueryChange}
+			size="small"
+			InputProps={{
+				startAdornment: (
+					<InputAdornment position="start">
+						<SearchRoundedIcon color="disabled" fontSize="small" />
+					</InputAdornment>
+				)
+			}}
+		/>
+	)
+}
+
+TableSearch.propTypes = {
+	onQueryChange: PropTypes.func.isRequired
 }
 
 TableHead.propTypes = {
@@ -170,78 +178,7 @@ TableHead.propTypes = {
 	onSelectAllClick: PropTypes.func.isRequired,
 	order: PropTypes.oneOf(['asc', 'desc']).isRequired,
 	orderBy: PropTypes.string.isRequired,
-	rowCount: PropTypes.number.isRequired,
-}
-
-const useToolbarStyles = makeStyles(theme => ({
-	root: {
-		paddingLeft: theme.spacing(2),
-		paddingRight: theme.spacing(1),
-	},
-	highlight:
-		theme.palette.type === 'light'
-			? {
-					color: theme.palette.primary.main,
-					backgroundColor: lighten(theme.palette.secondary.main, 0.85),
-			  }
-			: {
-					color: theme.palette.text.primary,
-					backgroundColor: theme.palette.secondary.dark,
-			  },
-	title: {
-		flex: '1 1 100%',
-	},
-}))
-
-const TableToolbar = props => {
-	const classes = useToolbarStyles()
-	const { numSelected } = props
-
-	return (
-		<Toolbar
-			className={clsx(classes.root, {
-				[classes.highlight]: numSelected > 0,
-			})}
-		>
-			{numSelected > 0 ? (
-				<Typography
-					className={classes.title}
-					color='inherit'
-					variant='subtitle1'
-					component='div'
-				>
-					{numSelected} selected
-				</Typography>
-			) : (
-				<Typography
-					className={classes.title}
-					variant='h6'
-					id='tableTitle'
-					component='div'
-				>
-					{/* Students */}
-				</Typography>
-			)}
-
-			{numSelected > 0 ? (
-				<Tooltip title='Delete'>
-					<IconButton aria-label='delete'>
-						<DeleteIcon fontSize='small' />
-					</IconButton>
-				</Tooltip>
-			) : (
-				<Tooltip title='Filter list'>
-					<IconButton aria-label='filter list'>
-						<FilterListIcon />
-					</IconButton>
-				</Tooltip>
-			)}
-		</Toolbar>
-	)
-}
-
-TableToolbar.propTypes = {
-	numSelected: PropTypes.number.isRequired,
+	rowCount: PropTypes.number.isRequired
 }
 
 const useContextMenuStyles = makeStyles(theme => ({
@@ -250,14 +187,20 @@ const useContextMenuStyles = makeStyles(theme => ({
 		background: theme.palette.error.main,
 		color: theme.palette.getContrastText(theme.palette.error.main),
 		'&:hover': {
-			background: theme.palette.error.main,
-		},
-	},
+			background: theme.palette.error.main
+		}
+	}
 }))
 
-const ContextMenu = () => {
+const ContextMenu = props => {
+	const { _id } = props
 	const classes = useContextMenuStyles()
 	const [anchorEl, setAnchorEl] = React.useState(null)
+	const dispatch = useDispatch()
+
+	const handleDelete = () => {
+		dispatch(deleteStudent(_id)).then(() => setAnchorEl(null))
+	}
 
 	const handleClick = event => {
 		setAnchorEl(event.currentTarget)
@@ -270,17 +213,17 @@ const ContextMenu = () => {
 	return (
 		<div>
 			<IconButton
-				aria-label='actions'
-				aria-controls='context-menu'
-				aria-haspopup='true'
+				aria-label="actions"
+				aria-controls="context-menu"
+				aria-haspopup="true"
 				onClick={handleClick}
-				size='small'
+				size="small"
 			>
-				<MoreVertIcon fontSize='small' />
+				<MoreVertIcon fontSize="small" />
 			</IconButton>
 
 			<Menu
-				id='context-menu'
+				id="context-menu"
 				anchorEl={anchorEl}
 				keepMounted
 				open={Boolean(anchorEl)}
@@ -289,7 +232,11 @@ const ContextMenu = () => {
 				<MenuItem dense onClick={handleClose}>
 					Edit
 				</MenuItem>
-				<MenuItem dense onClick={handleClose} className={classes.delete}>
+				<MenuItem
+					dense
+					onClick={handleDelete}
+					className={classes.delete}
+				>
 					Delete
 				</MenuItem>
 			</Menu>
@@ -298,61 +245,150 @@ const ContextMenu = () => {
 }
 
 ContextMenu.propTypes = {
-	// numSelected: PropTypes.number.isRequired,
+	_id: PropTypes.string.isRequired
 }
 
+const useRowStyles = makeStyles({
+	root: {
+		'& > *': {
+			borderBottom: 'unset'
+		}
+	},
+	link: {
+		textDecoration: 'none'
+	}
+})
+
 const Row = props => {
-	const { row, isItemSelected, labelId, handleClick } = props
+	const { row, isItemSelected, labelId, handleClick, numSelected } = props
 	const [open, setOpen] = React.useState(false)
+	const classes = useRowStyles()
+	const { path, url } = useRouteMatch()
 
 	return (
-		<TableRow
-			hover
-			// onClick={event => handleClick(event, row.regNo)}
-			role='checkbox'
-			aria-checked={isItemSelected}
-			tabIndex={-1}
-			key={row.regNo}
-			selected={isItemSelected}
-		>
-			<TableCell padding='checkbox'>
-				<Checkbox
-					checked={isItemSelected}
-					inputProps={{ 'aria-labelledby': labelId }}
-					size='small'
-					onClick={event => handleClick(event, row.regNo)}
-				/>
-			</TableCell>
-			<TableCell>
-				<IconButton
-					aria-label='expand row'
-					size='small'
-					onClick={e => {
-						e.preventDefault()
-						setOpen(!open)
-					}}
+		<React.Fragment>
+			<TableRow
+				hover
+				// onClick={event => handleClick(event, row.regNo)}
+				role="checkbox"
+				aria-checked={isItemSelected}
+				tabIndex={-1}
+				key={row._id} // unique key
+				selected={isItemSelected}
+				className={classes.root}
+			>
+				<TableCell>
+					{row.description && (
+						<IconButton
+							aria-label="expand row"
+							size="small"
+							onClick={e => {
+								e.preventDefault()
+								setOpen(!open)
+							}}
+						>
+							{open ? (
+								<KeyboardArrowUpIcon />
+							) : (
+								<KeyboardArrowDownIcon />
+							)}
+						</IconButton>
+					)}
+				</TableCell>
+				<TableCell
+					align="left"
+					component={Link}
+					to={`${path}/${row._id}`}
+					className={classes.link}
 				>
-					{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-				</IconButton>
-			</TableCell>
-			<TableCell component='th' id={labelId} scope='row' padding='none'>
-				{row.regNo}
-			</TableCell>
-			<TableCell align='left'>{row.nic}</TableCell>
-			<TableCell align='left'>{row.name}</TableCell>
-			<TableCell align='left'>{row.district}</TableCell>
-			<TableCell align='left'>{row.courseOfStudy}</TableCell>
-			<TableCell align='right'>{row.grossIncome}</TableCell>
-			<TableCell align='right'>
-				<ContextMenu />
-			</TableCell>
-		</TableRow>
+					{moment(row.date).format('DD-MM-YYYY')}
+				</TableCell>
+				<TableCell
+					align="left"
+					component={Link}
+					to={`${path}/${row._id}`}
+					className={classes.link}
+				>
+					{row.academicYear}
+				</TableCell>
+				<TableCell
+					align="left"
+					component={Link}
+					to={`${path}/${row._id}`}
+					className={classes.link}
+				>
+					{row.faculty}
+				</TableCell>
+				<TableCell
+					align="left"
+					component={Link}
+					to={`${path}/${row._id}`}
+					className={classes.link}
+				>
+					{row.course}
+				</TableCell>
+				<TableCell
+					align="left"
+					component={Link}
+					to={`${path}/${row._id}`}
+					className={classes.link}
+				>
+					{moment(row.createdAt).fromNow()}
+				</TableCell>
+				<TableCell
+					align="right"
+					component={Link}
+					to={`${path}/${row._id}`}
+					className={classes.link}
+				>
+					{row.noOfInstallments}
+				</TableCell>
+				{numSelected > 0 ? null : (
+					<TableCell align="right">
+						<ContextMenu _id={row._id} />
+					</TableCell>
+				)}
+			</TableRow>
+			<TableRow>
+				<TableCell
+					style={{ paddingBottom: 0, paddingTop: 0 }}
+					colSpan={1}
+				></TableCell>
+				<TableCell
+					style={{ paddingBottom: 0, paddingTop: 0 }}
+					colspan={6}
+				>
+					<Collapse in={open} timeout="auto" unmountOnExit>
+						<Box my={1}>
+							<Typography
+								variant="subtitle2"
+								gutterBottom
+								component="span"
+							>
+								Description
+							</Typography>
+							<Typography
+								variant="body2"
+								gutterBottom
+								component="span"
+							>
+								&nbsp; - {row.description}
+							</Typography>
+						</Box>
+					</Collapse>
+				</TableCell>
+				<TableCell
+					style={{ paddingBottom: 0, paddingTop: 0 }}
+					colSpan={1}
+				></TableCell>
+			</TableRow>
+		</React.Fragment>
 	)
 }
 
 const useStyles = makeStyles(theme => ({
 	table: {
-		minWidth: 750,
+		minWidth: 750
 	},
 	visuallyHidden: {
 		border: 0,
@@ -363,17 +399,26 @@ const useStyles = makeStyles(theme => ({
 		padding: 0,
 		position: 'absolute',
 		top: 20,
-		width: 1,
-	},
+		width: 1
+	}
 }))
 
-export default function Installment() {
+function Table(props) {
+	const { data } = props
 	const classes = useStyles()
-	const [order, setOrder] = React.useState('asc')
-	const [orderBy, setOrderBy] = React.useState('grossIncome')
+	const [order, setOrder] = React.useState('desc')
+	const [orderBy, setOrderBy] = React.useState('createdAt')
 	const [selected, setSelected] = React.useState([])
 	const [page, setPage] = React.useState(0)
-	const [rowsPerPage, setRowsPerPage] = React.useState(5)
+	const [rowsPerPage, setRowsPerPage] = React.useState(10)
+	const [query, setQuery] = React.useState('')
+
+	const fuse = new Fuse(data, {
+		threshold: 0.4,
+		keys: ['faculty', 'course', 'description']
+	})
+
+	const rows = query ? fuse.search(query).map(x => x.item) : data
 
 	const handleRequestSort = (event, property) => {
 		const isAsc = orderBy === property && order === 'asc'
@@ -383,7 +428,7 @@ export default function Installment() {
 
 	const handleSelectAllClick = event => {
 		if (event.target.checked) {
-			const newSelecteds = rows.map(n => n.regNo)
+			const newSelecteds = rows.map(n => n._id)
 			setSelected(newSelecteds)
 			return
 		}
@@ -419,20 +464,24 @@ export default function Installment() {
 		setPage(0)
 	}
 
+	const handleQueryChange = event => {
+		setQuery(event.target.value)
+	}
+
 	const isSelected = name => selected.indexOf(name) !== -1
 
 	const emptyRows =
 		rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
 
 	return (
-		<>
-			<TableToolbar numSelected={selected.length} />
+		<React.Fragment>
+			<TableSearch onQueryChange={handleQueryChange} />
 			<TableContainer>
-				<Table
+				<MuiTable
 					className={classes.table}
-					aria-labelledby='tableTitle'
-					size='small'
-					aria-label='enhanced table'
+					aria-labelledby="tableTitle"
+					size="small"
+					aria-label="enhanced table"
 				>
 					<TableHead
 						classes={classes}
@@ -442,12 +491,16 @@ export default function Installment() {
 						onSelectAllClick={handleSelectAllClick}
 						onRequestSort={handleRequestSort}
 						rowCount={rows.length}
+						numSelected={selected.length}
 					/>
 					<TableBody>
 						{stableSort(rows, getComparator(order, orderBy))
-							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+							.slice(
+								page * rowsPerPage,
+								page * rowsPerPage + rowsPerPage
+							)
 							.map((row, index) => {
-								const isItemSelected = isSelected(row.regNo)
+								const isItemSelected = isSelected(row._id)
 								const labelId = `enhanced-table-checkbox-${index}`
 
 								return (
@@ -456,6 +509,7 @@ export default function Installment() {
 										labelId={labelId}
 										isItemSelected={isItemSelected}
 										handleClick={handleClick}
+										numSelected={selected.length}
 									/>
 								)
 							})}
@@ -465,17 +519,27 @@ export default function Installment() {
 							</TableRow>
 						)} */}
 					</TableBody>
-				</Table>
+				</MuiTable>
 			</TableContainer>
 			<TablePagination
-				rowsPerPageOptions={[5, 10, 25]}
-				component='div'
+				rowsPerPageOptions={[10, 30, 50]}
+				component="div"
 				count={rows.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
 				onChangePage={handleChangePage}
 				onChangeRowsPerPage={handleChangeRowsPerPage}
 			/>
-		</>
+		</React.Fragment>
 	)
 }
+
+const mapStateToProps = state =>
+	state.user.data.role === 'admin'
+		? { data: state.installments.data }
+		: {
+				data: state.installments.data.filter(
+					x => x.faculty === state.user.data.faculty
+				)
+		  }
+export default connect(mapStateToProps)(Table)

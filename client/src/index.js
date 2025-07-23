@@ -7,7 +7,12 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import { BrowserRouter } from 'react-router-dom'
 
 import { Provider } from 'react-redux'
+import { state } from 'redux'
 import store from './store'
+
+import axios from 'axios'
+
+// axios.defaults.baseURL = 'http://localhost:8080/api/v1'
 
 ReactDOM.render(
 	<React.StrictMode>
