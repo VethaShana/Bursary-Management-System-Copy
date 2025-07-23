@@ -6,7 +6,7 @@ import {
 	XAxis,
 	YAxis,
 	Label,
-	ResponsiveContainer,
+	ResponsiveContainer
 } from 'recharts'
 import { Typography } from '@material-ui/core'
 
@@ -24,7 +24,7 @@ const data = [
 	createData('15:00', 2000),
 	createData('18:00', 2400),
 	createData('21:00', 2400),
-	createData('24:00', undefined),
+	createData('24:00', undefined)
 ]
 
 export default function Chart() {
@@ -32,7 +32,12 @@ export default function Chart() {
 
 	return (
 		<React.Fragment>
-			<Typography component='h2' variant='h6' color='primary' gutterBottom>
+			<Typography
+				component="h2"
+				variant="h6"
+				color="primary"
+				gutterBottom
+			>
 				Today
 			</Typography>
 			<ResponsiveContainer>
@@ -42,22 +47,29 @@ export default function Chart() {
 						top: 16,
 						right: 16,
 						bottom: 0,
-						left: 24,
+						left: 24
 					}}
 				>
-					<XAxis dataKey='time' stroke={theme.palette.text.secondary} />
+					<XAxis
+						dataKey="time"
+						stroke={theme.palette.text.secondary}
+					/>
 					<YAxis stroke={theme.palette.text.secondary}>
 						<Label
 							angle={270}
-							position='left'
-							style={{ textAnchor: 'middle', fill: theme.palette.text.primary }}
+							position="left"
+							style={{
+								textAnchor: 'middle',
+								fill: theme.palette.text.primary
+							}}
 						>
-							Sales ($)
+							{/* Sales ($) */}
+							Students
 						</Label>
 					</YAxis>
 					<Line
-						type='monotone'
-						dataKey='amount'
+						type="monotone"
+						dataKey="amount"
 						stroke={theme.palette.primary.main}
 						dot={false}
 					/>

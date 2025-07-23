@@ -1,1 +1,1 @@
-export const titles = ['Mr', 'Mrs', 'Miss', 'Rev']
+export const titles = ['Mr.', 'Mrs.', 'Miss.', 'Rev.']

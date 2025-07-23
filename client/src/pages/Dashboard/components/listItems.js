@@ -9,6 +9,7 @@ import PaymentIcon from '@material-ui/icons/Payment'
 import DescriptionIcon from '@material-ui/icons/Description'
 import ListItemText from '@material-ui/core/ListItemText'
 import { Link, useRouteMatch } from 'react-router-dom'
+import ProtectedContent from './ProtectedContent'
 
 export const MainListItems = () => {
 	const { url } = useRouteMatch()
@@ -16,27 +17,29 @@ export const MainListItems = () => {
 		<div>
 			<ListItem button component={Link} to={url}>
 				<ListItemIcon>
-					<DashboardIcon fontSize='small' />
+					<DashboardIcon fontSize="small" />
 				</ListItemIcon>
-				<ListItemText primary='Dashboard' />
+				<ListItemText primary="Dashboard" />
 			</ListItem>
 			<ListItem button component={Link} to={`${url}/students`}>
 				<ListItemIcon>
-					<AssignmentIndIcon fontSize='small' />
+					<AssignmentIndIcon fontSize="small" />
 				</ListItemIcon>
-				<ListItemText primary='Students' />
+				<ListItemText primary="Students" />
 			</ListItem>
-			<ListItem button component={Link} to={`${url}/applications`}>
-				<ListItemIcon>
-					<DescriptionIcon fontSize='small' />
-				</ListItemIcon>
-				<ListItemText primary='Applications' />
-			</ListItem>
+			<ProtectedContent role="admin">
+				<ListItem button component={Link} to={`${url}/applications`}>
+					<ListItemIcon>
+						<DescriptionIcon fontSize="small" />
+					</ListItemIcon>
+					<ListItemText primary="Applications" />
+				</ListItem>
+			</ProtectedContent>
 			<ListItem button component={Link} to={`${url}/installments`}>
 				<ListItemIcon>
-					<PaymentIcon fontSize='small' />
+					<PaymentIcon fontSize="small" />
 				</ListItemIcon>
-				<ListItemText primary='Installments' />
+				<ListItemText primary="Installments" />
 			</ListItem>
 		</div>
 	)
@@ -48,15 +51,15 @@ export const SecondaryListItems = () => {
 		<div>
 			<ListItem button component={Link} to={`${url}/users`}>
 				<ListItemIcon>
-					<SupervisedUserCircleIcon fontSize='small' />
+					<SupervisedUserCircleIcon fontSize="small" />
 				</ListItemIcon>
-				<ListItemText primary='Users' />
+				<ListItemText primary="Users" />
 			</ListItem>
 			<ListItem button component={Link} to={`${url}/settings`}>
 				<ListItemIcon>
-					<SettingsIcon fontSize='small' />
+					<SettingsIcon fontSize="small" />
 				</ListItemIcon>
-				<ListItemText primary='Settings' />
+				<ListItemText primary="Settings" />
 			</ListItem>
 		</div>
 	)

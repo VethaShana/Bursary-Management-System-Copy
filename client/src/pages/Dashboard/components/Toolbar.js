@@ -9,34 +9,32 @@ function Toolbar() {
 	const installmentRef = useRef(null)
 	const summaryRef = useRef(null)
 	return (
-		<>
-			<Grid container xs={12} display='flex' spacing={2} justify='flex-end'>
-				<Grid item>
-					<Button
-						variant='contained'
-						color='primary'
-						size='small'
-						startIcon={<AddIcon fontSize='small' />}
-						onClick={() => installmentRef.current.showDialog()}
-					>
-						Add Installment
-					</Button>
-					<Dialog.Installment ref={installmentRef} />
-				</Grid>
-				<Grid item>
-					<Button
-						variant='contained'
-						color='primary'
-						size='small'
-						startIcon={<DescriptionIcon fontSize='small' />}
-						onClick={() => summaryRef.current.showDialog()}
-					>
-						Summary
-					</Button>
-					<Dialog.Summary ref={summaryRef} />
-				</Grid>
+		<Grid container display="flex" spacing={2} justify="flex-end">
+			<Grid item>
+				<Button
+					variant="contained"
+					color="primary"
+					size="small"
+					startIcon={<AddIcon fontSize="small" />}
+					onClick={() => installmentRef.current.showDialog()}
+				>
+					Add Installment
+				</Button>
+				<Dialog.Installment ref={installmentRef} />
 			</Grid>
-		</>
+			<Grid item>
+				<Button
+					variant="contained"
+					color="primary"
+					size="small"
+					startIcon={<DescriptionIcon fontSize="small" />}
+					onClick={() => summaryRef.current.showDialog()}
+				>
+					Summary
+				</Button>
+				<Dialog.Summary ref={summaryRef} />
+			</Grid>
+		</Grid>
 	)
 }
 

@@ -5,7 +5,7 @@ import {
 	InputAdornment,
 	Typography,
 	LinearProgress,
-	makeStyles,
+	makeStyles
 } from '@material-ui/core'
 import React, { forwardRef, useImperativeHandle } from 'react'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
@@ -22,15 +22,16 @@ import { KeyboardDatePicker } from 'formik-material-ui-pickers'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
 
-import { faculties } from '../../../../utils/data'
+import { courses } from '../../../../utils/data'
+const faculties = courses.map(x => x.faculty)
 
 const useStyles = makeStyles(theme => ({
 	dialogContent: {
-		paddingBottom: theme.spacing(2),
+		paddingBottom: theme.spacing(2)
 	},
 	dialogActions: {
-		padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
-	},
+		padding: `${theme.spacing(2)}px ${theme.spacing(2)}px`
+	}
 }))
 
 const academicYears = ((year, number) =>
@@ -41,7 +42,7 @@ const academicYears = ((year, number) =>
 const initialValues = {
 	from: new Date(),
 	to: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-	faculty: 'N/A',
+	faculty: 'N/A'
 }
 
 const validationSchema = yup.object({
@@ -50,7 +51,7 @@ const validationSchema = yup.object({
 	faculty: yup
 		.string()
 		.oneOf(faculties, 'Invalid Faculty')
-		.required('Faculty is required'),
+		.required('Faculty is required')
 })
 
 const onSubmit = () => {}
@@ -75,7 +76,7 @@ const Summary = forwardRef((props, ref) => {
 
 	useImperativeHandle(ref, () => {
 		return {
-			showDialog: showDialog,
+			showDialog: showDialog
 		}
 	})
 
@@ -83,7 +84,7 @@ const Summary = forwardRef((props, ref) => {
 		<Dialog
 			open={open}
 			onClose={handleClose}
-			aria-labelledby='form-dialog-title'
+			aria-labelledby="form-dialog-title"
 			fullScreen={fullScreen}
 			fullWidth
 		>
@@ -94,7 +95,9 @@ const Summary = forwardRef((props, ref) => {
 			>
 				{({ submitForm, isSubmitting, touched, errors, values }) => (
 					<MuiPickersUtilsProvider utils={DateFnsUtils}>
-						<DialogTitle id='form-dialog-title'>Create Summary</DialogTitle>
+						<DialogTitle id="form-dialog-title">
+							Create Summary
+						</DialogTitle>
 						<DialogContent className={classes.dialogContent}>
 							{/* <DialogContentText>
 									Issue Installments for students.
@@ -104,19 +107,22 @@ const Summary = forwardRef((props, ref) => {
 									<Grid item xs={12} sm={12}>
 										<Field
 											component={TextField}
-											type='text'
-											name='faculty'
-											label='Faculty'
+											type="text"
+											name="faculty"
+											label="Faculty"
 											select
 											InputLabelProps={{
-												shrink: true,
+												shrink: true
 											}}
 										>
 											<MenuItem key={'N/A'} value={'N/A'}>
 												N/A
 											</MenuItem>
 											{faculties.map(option => (
-												<MenuItem key={option} value={option}>
+												<MenuItem
+													key={option}
+													value={option}
+												>
 													{option}
 												</MenuItem>
 											))}
@@ -125,17 +131,17 @@ const Summary = forwardRef((props, ref) => {
 									<Grid item xs={12} sm={6}>
 										<Field
 											component={KeyboardDatePicker}
-											name='from'
-											label='From'
-											format='dd/MM/yyyy'
+											name="from"
+											label="From"
+											format="dd/MM/yyyy"
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											component={KeyboardDatePicker}
-											name='to'
-											label='To'
-											format='dd/MM/yyyy'
+											name="to"
+											label="To"
+											format="dd/MM/yyyy"
 										/>
 									</Grid>
 								</Grid>
@@ -144,15 +150,19 @@ const Summary = forwardRef((props, ref) => {
 						{isSubmitting && <LinearProgress />}
 
 						<DialogActions className={classes.dialogActions}>
-							<Button onClick={handleClose} variant='text' autoFocus>
+							<Button
+								onClick={handleClose}
+								variant="text"
+								autoFocus
+							>
 								Cancel
 							</Button>
 							<Button
 								disabled={isSubmitting}
 								onClick={submitForm}
 								autoFocus
-								variant='contained'
-								color='secondary'
+								variant="contained"
+								color="secondary"
 							>
 								Create Summary
 							</Button>

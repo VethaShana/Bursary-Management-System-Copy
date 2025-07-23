@@ -7,17 +7,18 @@ import StudentChart from '../components/StudentChart'
 import Instalment from '../components/Instalment'
 import Title from '../components/Title'
 import Toolbar from '../components/Toolbar'
+import ProtectedContent from '../components/ProtectedContent'
 
 const useStyles = makeStyles(theme => ({
 	paper: {
 		padding: theme.spacing(2),
 		display: 'flex',
 		overflow: 'auto',
-		flexDirection: 'column',
+		flexDirection: 'column'
 	},
 	fixedHeight: {
 		// height: 240,
-	},
+	}
 }))
 
 function Installments() {
@@ -25,18 +26,20 @@ function Installments() {
 
 	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
 	return (
-		<>
+		<React.Fragment>
 			<Grid container spacing={3}>
 				<Grid item xs={12}>
 					<Title
-						title='Installments'
-						description='Review/Issue Installments &amp; create reports.'
+						title="Installments"
+						description="Review/Issue Installments &amp; create reports."
 					/>
 				</Grid>
 
-				<Grid item xs={12}>
-					<Toolbar />
-				</Grid>
+				<ProtectedContent role="admin">
+					<Grid item xs={12}>
+						<Toolbar />
+					</Grid>
+				</ProtectedContent>
 
 				{/* Enhanced Table */}
 				<Grid item xs={12}>
@@ -45,7 +48,7 @@ function Installments() {
 					</Paper>
 				</Grid>
 			</Grid>
-		</>
+		</React.Fragment>
 	)
 }
 
